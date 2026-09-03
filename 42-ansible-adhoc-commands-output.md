@@ -135,6 +135,12 @@ Used to manage services.
 
 Ansible modules describe the desired state of the system, making tasks idempotent when the module supports it.
 
-# Screenshots
-
-![alt text](<Screenshot (688).png>) ![alt text](<Screenshot (700).png>) ![alt text](<Screenshot (699).png>) ![alt text](<Screenshot (698).png>) ![alt text](<Screenshot (697).png>) ![alt text](<Screenshot (696).png>) ![alt text](<Screenshot (695).png>) ![alt text](<Screenshot (694).png>) ![alt text](<Screenshot (693).png>) ![alt text](<Screenshot (692).png>) ![alt text](<Screenshot (691).png>) ![alt text](<Screenshot (690).png>) ![alt text](<Screenshot (689).png>)
+![alt text](<Screenshot (688).png>)
+![alt text](<Screenshot (689).png>)
+![alt text](<Screenshot (690).png>)
+![alt text](<Screenshot (691).png>)
+![alt text](<Screenshot (693).png>)
+![alt text](<Screenshot (695).png>)
+![alt text](<Screenshot (696).png>)
+![alt text](<Screenshot (699).png>)
+![alt text](<Screenshot (700).png>)
