@@ -55,8 +55,6 @@ Therefore, `init.sql` should contain only the table creation, permissions, and d
         repo_url: "https://github.com/SYED-SUMAID/Portfolio-Shell-Automation.git"
         repo_dir: "/opt/Portfolio-Shell-Automation"
         web_dir: "/var/www/html"
-![alt text](<Screenshot (630).png>)
-![alt text](<Screenshot (631).png>)
 
       tasks:
 
