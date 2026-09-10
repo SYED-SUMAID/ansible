@@ -15,7 +15,6 @@ apache-website/
 
     mkdir apache-website
     cd apache-website
-![alt text](<Screenshot (711).png>)
 
 ## Step 2: Create Website Directory
 
@@ -212,9 +211,6 @@ Add:
 ```
 
 ![alt text](<Screenshot (726)(1).png>)
-![alt text](<Screenshot (727)(1).png>)
-![alt text](<Screenshot (728)(1).png>)
-![alt text](<Screenshot (729)(1).png>)
 
 ## Step 4: Create the Ansible Playbook
 
@@ -253,18 +249,7 @@ Playbook:
             recurse: yes
 
 ![alt text](<Screenshot (717).png>)
-
-## Step 5: Configure Inventory
-
-Edit the default Ansible inventory:
-
-    sudo nano /etc/ansible/hosts
-
-Add:
-
-    [localhost]
-    localhost ansible_connection=local
-![alt text](<Screenshot (718).png>)
+ 
 
 ## Step 6: Test Ansible
 
@@ -282,11 +267,6 @@ Expected result:
 
     ansible-playbook setup-static-website-apache.yml
 
-## Step 8: Verify
-
-Check the website files:
-
-    ls -l /var/www/html/
 
 Open the website in a browser:
 
