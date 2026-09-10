@@ -1,159 +1,213 @@
-# Dynamic Apache Portfolio Deployment with Ansible
+# Ansible Dynamic Portfolio
+
+> Automated deployment of a dynamic PHP portfolio using Ansible, Apache, PHP, and PostgreSQL.
 
 ## Overview
 
-This project automates the deployment of a dynamic PHP portfolio using Ansible.
+This project demonstrates automated deployment of a dynamic PHP web application using Ansible.
+
+Ansible installs and configures the required services, creates the PostgreSQL database, deploys the PHP application, initializes the database, and restarts Apache.
 
 ## Technologies
 
 - Ansible
-- Apache2
+- Linux / Ubuntu
+- Apache HTTP Server
 - PHP
 - PostgreSQL
-- Git/GitHub
+- SQL
+- Git / GitHub
 
 ## Project Structure
 
-    Portfolio-Shell-Automation/
-    ├── index.php
-    ├── init.sql
-    ├── portfolio.yml
-    └── README.md
-
-## What the Playbook Does
-
-1. Installs Apache, PHP, PostgreSQL, and Git.
-2. Starts and enables Apache and PostgreSQL.
-3. Clones the portfolio from GitHub.
-4. Creates the PostgreSQL user `code`.
-5. Creates the database `vn7`.
-6. Executes `init.sql`.
-7. Creates the `sm_users` table and inserts data.
-8. Deploys the portfolio to `/var/www/html`.
-9. Sets Apache ownership.
-10. Restarts Apache.
-
-## Database
-
-- Database: `vn7`
-- User: `code`
-- Table: `sm_users`
-
-The PostgreSQL user and database are created by Ansible.
-
-Therefore, `init.sql` should contain only the table creation, permissions, and data insertion.
+    ansible-dynamic-portfolio/
+    ├── README.md
+    ├── setup.yml
+    ├── inventory.ini
+    └── files/
+        ├── index.php
+        └── init.sql
 
 ## Ansible Playbook
 
-    ---
-    - name: Setup Dynamic Apache Portfolio
-      hosts: localhost
-      connection: local
-      become: yes
+The main automation is handled by `setup.yml`.
 
-      vars:
-        repo_url: "https://github.com/SYED-SUMAID/Portfolio-Shell-Automation.git"
-        repo_dir: "/opt/Portfolio-Shell-Automation"
-        web_dir: "/var/www/html"
+The playbook:
+
+1. Updates the APT package cache
+2. Installs Apache, PHP, PostgreSQL, and required dependencies
+3. Starts and enables Apache and PostgreSQL
+4. Creates the PostgreSQL database and user
+5. Grants database privileges
+6. Deploys `index.php` to Apache
+7. Copies and executes `init.sql`
+8. Restarts Apache
+
+The complete playbook is available in [`setup.yml`](setup.yml).
+
+### Main Playbook Structure
+
+    - name: Setup Dynamic PHP Portfolio
+      hosts: localhost
+      become: true
 
       tasks:
-
-        - name: Install required packages
-          apt:
+        - name: Install Apache PHP PostgreSQL
+          ansible.builtin.apt:
             name:
               - apache2
               - php
               - libapache2-mod-php
               - php-pgsql
               - postgresql
-              - git
+              - postgresql-contrib
+              - python3-psycopg2
             state: present
-            update_cache: yes
-
-        - name: Start Apache
-          service:
-            name: apache2
-            state: started
-            enabled: yes
-
-        - name: Start PostgreSQL
-          service:
-            name: postgresql
-            state: started
-            enabled: yes
-
-        - name: Clone portfolio from GitHub
-          git:
-            repo: "{{ repo_url }}"
-            dest: "{{ repo_dir }}"
-            version: main
-            force: yes
-
-        - name: Create PostgreSQL user
-          shell: |
-            sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='code'" | grep -q 1 ||
-            sudo -u postgres psql -c "CREATE USER code WITH PASSWORD '12345';"
 
         - name: Create PostgreSQL database
-          shell: |
-            sudo -u postgres psql -tc "SELECT 1 FROM pg_database WHERE datname='vn7'" | grep -q 1 ||
-            sudo -u postgres psql -c "CREATE DATABASE vn7 OWNER code;"
+          become_user: postgres
+          community.postgresql.postgresql_db:
+            name: vn7
+            state: present
 
-        - name: Copy init.sql
-          copy:
-            src: "{{ repo_dir }}/init.sql"
-            dest: "/tmp/init.sql"
-            remote_src: yes
+        - name: Create PostgreSQL user
+          become_user: postgres
+          community.postgresql.postgresql_user:
+            name: code
+            password: "12345"
+            state: present
 
-        - name: Setup database
-          shell: |
-            sudo -u postgres psql -d vn7 -f /tmp/init.sql
+## Inventory
 
-        - name: Deploy portfolio
-          shell: |
-            cp -r {{ repo_dir }}/* {{ web_dir }}/
+`inventory.ini` defines the Ansible hosts used by the project.
 
-        - name: Set Apache ownership
-          file:
-            path: "{{ web_dir }}"
-            owner: www-data
-            group: www-data
-            recurse: yes
+    [webservers]
+    192.168.1.28
+    192.168.1.30
 
-        - name: Restart Apache
-          service:
-            name: apache2
-            state: restarted
-![alt text](<Screenshot (721).png>)
-![alt text](<Screenshot (722).png>)
+    [local]
+    localhost ansible_connection=local
 
-## Run the Playbook
+## PHP Application
 
-    ansible-playbook setup-portfolio-dynamic-website-ansible.yml
-![alt text](<Screenshot (723).png>)
+`files/index.php` is the dynamic frontend.
 
-## Verify
+It:
 
-Check Apache:
+- Connects to PostgreSQL
+- Queries the `sm_users` table
+- Retrieves profile information
+- Generates profile cards dynamically
+- Displays the data through the web interface
+
+## Database Initialization
+
+`files/init.sql` handles database initialization.
+
+It:
+
+- Creates the `sm_users` table
+- Grants permissions to the application user
+- Clears existing records
+- Inserts portfolio data
+
+## Database
+
+| Setting | Value |
+|---|---|
+| Database | `vn7` |
+| User | `code` |
+| Table | `sm_users` |
+
+## Ansible Collection
+
+    ansible-galaxy collection install community.postgresql
+
+## Deployment
+
+Run the playbook from the project directory:
+
+    ansible-playbook setup.yml
+
+## Deployment Flow
+
+    Ansible
+       ↓
+    Install Required Packages
+       ↓
+    Configure Apache + PostgreSQL
+       ↓
+    Create Database + User
+       ↓
+    Deploy index.php
+       ↓
+    Execute init.sql
+       ↓
+    Restart Apache
+       ↓
+    Dynamic Portfolio
+
+## Terminal Proof
+
+### Playbook Execution
+
+    ansible-playbook setup.yml
+
+### Ansible Connectivity
+
+    ansible localhost -i inventory.ini -m ansible.builtin.ping
+
+### Apache Status
 
     sudo systemctl status apache2
 
-Check PostgreSQL:
+### PostgreSQL Status
 
     sudo systemctl status postgresql
 
-Open the portfolio:
+### Database Tables
 
-    http://localhost
-![alt text](<Screenshot (724)(1).png>)
-## Deployment Flow
+    sudo -u postgres psql -d vn7 -c "\dt"
 
-    GitHub
-       ↓
-    Ansible
-       ↓
-    Apache + PHP
-       ↓
-    PostgreSQL
-       ↓
-    Dynamic Portfolio
+### Database Records
+
+    sudo -u postgres psql -d vn7 -c "SELECT * FROM sm_users;"
+
+### Deployed Application
+
+    ls -l /var/www/html/index.php
+
+### Website Test
+
+    curl http://localhost
+
+## Proof 
+
+- Successful Ansible playbook execution
+![alt text](<Screenshot (730)(1).png>)
+- Apache running
+![alt text](<Screenshot 2026-09-10 230123.png>)
+- PostgreSQL running
+![alt text](<Screenshot 2026-09-10 230024.png>)
+- Database table and records
+![alt text](<Screenshot 2026-09-10 230417.png>)
+- Final portfolio in the browser
+![alt text](<Screenshot (731)(1).png>)
+- GitHub repository structure
+![alt text](<Screenshot (733)(1).png>)
+
+## Key Concepts
+
+- Ansible Playbooks
+- Inventory Management
+- FQCN Modules
+- Privilege Escalation
+- Apache Deployment
+- PHP and PostgreSQL Integration
+- Database Automation
+- Linux Service Management
+- Git and GitHub
+
+## Result
+
+A fully automated deployment of a dynamic PHP portfolio where Apache serves the application, PHP handles the frontend logic, and PostgreSQL provides the dynamic data.
