@@ -147,8 +147,6 @@ Run the playbook from the project directory:
        ↓
     Dynamic Portfolio
 
-## Terminal Proof
-
 ### Playbook Execution
 
     ansible-playbook setup.yml
@@ -179,21 +177,32 @@ Run the playbook from the project directory:
 
 ### Website Test
 
-    curl http://localhost
+    http://localhost
 
 ## Proof 
 
 - Successful Ansible playbook execution
+
 ![alt text](<Screenshot (730)(1).png>)
+
 - Apache running
+
 ![alt text](<Screenshot 2026-09-10 230123.png>)
+
 - PostgreSQL running
+
 ![alt text](<Screenshot 2026-09-10 230024.png>)
+
 - Database table and records
+
 ![alt text](<Screenshot 2026-09-10 230417.png>)
+
 - Final portfolio in the browser
+
 ![alt text](<Screenshot (731)(1).png>)
+
 - GitHub repository structure
+
 ![alt text](<Screenshot (733)(1).png>)
 
 ## Key Concepts
