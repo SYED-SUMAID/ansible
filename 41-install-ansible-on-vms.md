@@ -18,7 +18,7 @@ Add the Ansible PPA and update the package list:
 
     sudo add-apt-repository --yes --update ppa:ansible/ansible
 
-![alt text](<Screenshot (684)(1).png>)
+![alt text](<ansible installation 2.png>)
 ---
 ## 4. Install Ansible
 
@@ -26,7 +26,7 @@ Install Ansible:
 
     sudo apt install ansible
 
-![alt text](<Screenshot (685)(1).png>)
+![alt text](<ansible insatllation.png>)
 ---
 ## 5. Verify Ansible Installation
 
